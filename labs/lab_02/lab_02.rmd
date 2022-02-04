@@ -78,21 +78,25 @@ west_virginia_ppp %>%
 ```
 
 **Q3** What are some potential reasons why a loan might not be paid out? What questions does that circumstance raise for you?
-**A3** [write your answer here]
+**A3** [Some reasons why a loan might not be paid out is because there wasn't enough funding, the applicant did not fill out the form correctly or they were not approved for the loan. This raises questions about how much funding was actually available. ]
 
 
 **Q4** Which month in 2021 had the most loans approved?
-**A4** [write your answer here]
+**A4** [February]
 
 ```{r}
 # Write the code to produce your answer here
-
+west_virginia_ppp %>% 
+  group_by(date_approved)%>%
+  summarise(count = n())
 ```
 
 **Q5** How many loans went to West Virginia applicants that listed the maximum number of jobs retained (500)? Which one had the earliest approved date?
-**A5** [write your answer here]
+**A5** [10, J. AUSTIN HEATING & COOLING, INC.]
 
 ```{r}
 # Write the code to produce your answer here
-
+west_virginia_ppp %>% 
+  group_by(jobs_retained, )%>%
+  summarise(count = n())
 ```
