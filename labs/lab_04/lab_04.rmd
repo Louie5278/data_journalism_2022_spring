@@ -39,6 +39,7 @@ Let's keep working with Maryland loan applications contained in the PPP data.
 
 ```{r}
 maryland_ppp <- read_rds ("lab_04.rds")
+
 # add code here to accomplish the task
 ```
 
@@ -59,8 +60,8 @@ Next join the two and then create a 5-character `zip5` column that we can use to
 
 ```{r}
 maryland_naics <- maryland_ppp %>% left_join(naics_codes, by="naics_code")
-
 maryland_naics <- maryland_naics %>% mutate(zip5 = str_sub(zip, 1, 5))
+
 # add code here to accomplish the task
 ```
 
@@ -80,8 +81,9 @@ Now we can join the PPP data to the ZCTA data:
 **Task** Join the Maryland PPP data (with NAICS already joined) with the ZCTA data, specifying the join column in both dataframes.
 
 ```{r}
+maryland_naics_zip <- maryland_naics %>% left_join(maryland_zcta, by=c("zip5"="ZCTA5N"))
 
-maryland_naics_zip <- maryland_naics %>% left_join(maryland_zcta, by=c("zip5"="ZCTA5N")) 
+
 # add code here to accomplish the task
 ```
 
@@ -100,13 +102,11 @@ maryland_naics_zip %>%
   group_by(title) %>% 
   summarise(count=n()) %>% 
     arrange(desc(count))
-
 # Write the code to produce your answer here
 ```
 
 **Q2** What are the top industries (using the NAICS title) with the most PPP applications in Maryland where the loan amount is more than $150,000?
-**A2** 
-Full-Service Restaurants	1488
+**A2** Full-Service Restaurants	1488
 Offices of Physicians (except Mental Health Specialists)	580
 Plumbing, Heating, and Air-Conditioning Contractors	458
 Offices of Dentists	419
@@ -138,7 +138,7 @@ maryland_naics_zip %>%
 ```
 
 **Q4** Which Maryland zip code had the largest sum of loans where the reported race of the applicant was "Asian", and what is the percentage of non-Hispanic Asian population in that zip code? Also show the number (count) of loans.
-**A4** [Zip Code 20850 and the PNHA population is 23.5 and the loan count was 240 for a total amount of 28994798.00	]
+**A4** Zip Code 20850 and the PNHA population is 23.5 and the loan count was 240 for a total amount of 28994798.00	
 
 ```{r}
 maryland_naics_zip %>% 
@@ -153,21 +153,33 @@ maryland_naics_zip %>%
 ```
 
 **Q5** What might explain why 20850 has a significant Asian population (23.5%) and only 240 of the 3,186 loans (7.5%) are to Asian applicants?
-**A5** [Maybe they chose not to identify or unanswered their race which is throwing off the data.]
+**A5** Maybe they chose not to identify or unanswered their race which is throwing off the data.]
 
 
 **Q6** Check to see if any Maryland zip codes that have loans where the PPP data lists the applicant as being Asian BUT are located in a zip code that does not appear to have Asian population according to the ZCTA data. How many loans do they have and what is the total amount? Take a look at these zip codes - what could explain this?
-**A6** [write your answer here]
+**A6** there are 3 zip codes with these requirements. 21031	  has 6 loans for a total amount of $6819563.0	as well as 21240 which had 3 loans and a total of 358674.0 dollars and then zip 20701 which had 4 loans for a total 75170.5	dollars. This could happen because they identified their race as something else or they did not fill it out at all.   
 
 ```{r}
+maryland_naics_zip %>% 
+  filter(race=="Asian",PNHA==0) %>% 
+  group_by(zip5, PNHA) %>% 
+  summarise(
+    count_loans = n(),
+    total_loans_amount = sum(amount)) %>% 
+    arrange(desc(total_loans_amount))
 # Write the code to produce your answer here
 
 ```
 
 **Q7** How many industries have exactly one loan in the data (hint: you can filter _after_ using `summarise` on any totals you create). From a newsworthiness standpoint, which of these is most worthy of further exploration, and why?
-**A7** [write your answer here]
-
+**A7** There are 44 industries with exactly one loan. something that might need more explanation is why only one Casino got a loan when there are dozens of casinos in the state. 
 ```{r}
+maryland_naics_zip %>% 
+
+  group_by(title) %>% 
+  summarise(
+    count_loans = n()) %>% 
+filter(count_loans==1)
 # Write the code to produce your answer here
 
 ```
