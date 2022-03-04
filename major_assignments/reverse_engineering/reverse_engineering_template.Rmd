@@ -18,10 +18,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction 
 
-In this notebook, we are reverse engineering the story, [STORY NAME](STORY URL)
+In this notebook, we are reverse engineering the story, [Nearly 250 women have been
+fatally shot by police since 2015](https://www.washingtonpost.com/graphics/2020/investigations/police-shootings-women/)
 
 ## Load libraries
+```{r}
+# Turn off scientific notation
+options(scipen=999)
 
+# Load the tidyverse.
+library(tidyverse)
+```
 Loading required libraries for this analysis.
 
 ```{r echo=FALSE, message=FALSE}
@@ -34,10 +41,12 @@ In this section, describe the source of the data, write a basic data dictionary 
 
 ```{r}
 # Load required data
-
+fatal_police_Shooting_data <- read_csv("data/fatal-police-shootings-data.csv")
 # Path to data should be loaded from folder "data" i.e. read_csv("data/name_of_data.csv")
 
 # Clean required data and prepare for analysis if needed. 
+fatal_police_Shooting_data_clean <- read_csv("data/fatal-police-shootings-data-clean-csv.csv")
+
 
 
 ```
@@ -47,12 +56,17 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 ### Sentence 1
 
-* **Sentence text**: [Paste in sentence to engineer here]
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Sentence text**: [“Since 2015, police have killed 26 unarmed women, including Taylor. Of those, 14 were White, seven were Black, four were Hispanic and one’s race was unknown. While about twice as many White women were shot and killed as Black women, White women account for five times the Black female population.” ]
+* **Analysis summary**: [After filtering for unarmed females and grouping and summarising the data we were able to get the data down and very close to the numbers in the original sentence. We understand that our numbers do not math up exactly and we think it may be because the Post may have a filter for females that is over a certain age and we did all ages. We did try to use a greater than or equal to 18 filter but we still did not get the same answers so we decided to stop here and ask for help.]
 
 ```{r}
 # Put code to reverse engineer sentence here
-
+fatal_police_Shooting_data_clean %>% 
+  filter(armed=="unarmed",gender=="F",) %>% 
+group_by(armed, gender, race) %>% 
+summarise(
+  count=n()
+  )
 # Display results of code below this codeblock
 
 ```
